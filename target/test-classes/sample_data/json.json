@@ -1,0 +1,10 @@
+{
+	"productId": "10001",
+	"productName": "Dell Studio",
+	"brand": "Dell",
+	"originalPrice": 1000,
+	"offer": {
+		"offerPrice": 900,
+		"offerValid": "31-Nov-2019"
+	}
+}

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd">
+    <flow name="variable_functionsFlow">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/variables" doc:name="HTTP"/>
+        <dw:transform-message doc:name="Transform Message">
+            <dw:input-payload doc:sample="sample_data\json_6.json"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/xml
+%var CurrencyByCountry=lookup('currencybycountryFLow',inboundProperties.'http.query.params'.country)
+%var convertedPrice=70
+%function getConvertedPrice(price) price*convertedPrice
+---
+products : {
+	(payload map {
+		product:{
+	pId:$.productId,
+	pName:$.productName,
+	pBrand:$.brand,
+	varpOrgPrice:$.originalPrice*convertedPrice,
+	functionpOrgPrice:$.originalPrice,
+	pOff:{
+	    pOffPrice:$.offer.offerPrice,
+	    pOffValid:$.offer.offerValid
+	    },
+	   pimages:{
+			  ( $.images map {
+			   	image:$
+			   })
+			   
+			
+			}
+	}
+		
+	})
+}
+]]></dw:set-payload>
+        </dw:transform-message>
+    </flow>
+</mule>
